@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -11,12 +12,12 @@ import styles from "./SignupForm.module.css";
 import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const router = useRouter();
 
   const handleSignup = async (e) => {
     e.preventDefault();
