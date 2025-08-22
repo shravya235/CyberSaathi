@@ -1,9 +1,10 @@
 import Navbar from "../Components/Navbar/Navbar";
+import homepage from "./Home/homepage";
 export default function Home() {
   return (
     <div>
-      <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage:"url('../images/bg.jpg')"}}></div>
-      <Navbar/>
+      
+      <homepage/>
     </div>
   );
 }
