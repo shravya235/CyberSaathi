@@ -2,9 +2,9 @@
 import { useState } from "react";
 import Logo from "./logo";
 import NavLinks from "./Navlinks";
-import ProfileLink from "./ProfileLink";
-import LanguageDropdown from "./LanguageDropdown";
-import { useLanguage } from "../../hooks/useLanguage";
+import ProfileLink from "./profile";
+import LanguageDropdown from "./language";
+import { useLanguage } from "../../hooks/languagehook";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,8 +13,8 @@ export default function Navbar() {
   const closeMenu = () => setMobileOpen(false);
 
   return (
-    <nav className="w-full bg-white shadow px-6 py-3 sticky top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between">
+    <nav className="text-black w-full bg-white shadow px-6 py-3 sticky top-0 z-50">
+      <div className="text-black container mx-auto flex items-center justify-between">
         {/* Left side Logo */}
         <Logo />
 
