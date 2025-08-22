@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-
-// Dynamically import motion components
-const MotionDiv = dynamic(() => import("framer-motion").then(mod => mod.motion.div), { ssr: false });
-const MotionButton = dynamic(() => import("framer-motion").then(mod => mod.motion.button), { ssr: false });
+import { motion } from "framer-motion";
+import { FiClock, FiCheck, FiX, FiArrowLeft, FiAward } from "react-icons/fi";
 
 // Import quiz data and components
-import level1 from "../../Data/quiz/level1";
-import level2 from "../../Data/quiz/level2";
-import level3 from "../../Data/quiz/level3";
-import ResultSummary from "./ResultSummary";
+import level1 from "../../Data/Quiz/level1";
+import level2 from "../../Data/Quiz/level2";
+import level3 from "../../Data/Quiz/level3";
+import ResultSummary from "@/components/Quiz/ResultSummary";
 import { recordQuizSession } from "../../utils/quizAnalytics";
+import "./QuizComponent.css";
 
 const QUIZ_DATA = {
   1: level1,
@@ -112,140 +110,145 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="quiz-component-container">
+      <div className="quiz-content-wrapper">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div className="quiz-header">
           <div className="flex justify-between items-center mb-4">
             <button
               onClick={onBackToLevels}
-              className="text-blue-600 hover:text-blue-800 font-semibold"
+              className="back-button"
             >
-              ← Back to Levels
+              <FiArrowLeft /> Back to Levels
             </button>
-            <div className="text-sm text-gray-600">
+            <div className="question-counter">
               Question {currentQuestion + 1} of {questions.length}
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+          <div className="progress-container">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="progress-bar"
               style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
             />
           </div>
 
           {/* Timer */}
-          <div className="text-center mb-4">
-            <div className={`text-lg font-bold ${timeLeft <= 10 ? 'text-red-600' : 'text-gray-700'}`}>
-              ⏱️ {timeLeft}s
+          <div className="timer-container">
+            <div className={`timer ${timeLeft <= 10 ? 'warning' : ''}`}>
+              <FiClock /> {timeLeft}s
             </div>
           </div>
 
           {/* Score */}
           <div className="text-center">
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+            <span className="score-badge">
               Score: {score}
             </span>
           </div>
         </div>
 
         {/* Question */}
-        <MotionDiv
+        <motion.div
           key={currentQuestion}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-lg p-6 mb-6"
+          className="question-card"
         >
-          <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+          <h2 className="question-text">
             {currentQ.question}
           </h2>
 
           {/* Answer Options */}
-          <div className="space-y-3">
+          <div className="options-container">
             {Array.isArray(currentQ.options) ? (
               // Multiple Choice
-              currentQ.options.map((option, index) => (
-                <MotionButton
-                  key={index}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => !showFeedback && handleAnswer(option)}
-                  disabled={showFeedback}
-                  className={`w-full py-3 px-4 rounded-lg text-left font-medium transition ${
-                    showFeedback
-                      ? option === currentQ.answer
-                        ? 'bg-green-100 border-2 border-green-500 text-green-800'
-                        : option === selectedAnswer
-                        ? 'bg-red-100 border-2 border-red-500 text-red-800'
-                        : 'bg-gray-100 text-gray-600'
-                      : selectedAnswer === option
-                      ? 'bg-blue-100 border-2 border-blue-500 text-blue-800'
-                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  {option}
-                </MotionButton>
-              ))
+              currentQ.options.map((option, index) => {
+                let buttonClass = "option-button";
+                if (showFeedback) {
+                  if (option === currentQ.answer) {
+                    buttonClass += " correct";
+                  } else if (option === selectedAnswer) {
+                    buttonClass += " incorrect";
+                  }
+                } else if (selectedAnswer === option) {
+                  buttonClass += " selected";
+                }
+
+                return (
+                  <motion.button
+                    key={index}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => !showFeedback && handleAnswer(option)}
+                    disabled={showFeedback}
+                    className={buttonClass}
+                  >
+                    {option}
+                  </motion.button>
+                );
+              })
             ) : (
               // True/False
               <>
-                <MotionButton
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => !showFeedback && handleAnswer("true")}
                   disabled={showFeedback}
-                  className={`w-full py-3 px-4 rounded-lg font-medium transition ${
+                  className={`option-button ${
                     showFeedback
-                      ? "true" === currentQ.answer.toString()
-                        ? 'bg-green-100 border-2 border-green-500 text-green-800'
-                        : selectedAnswer === "true"
-                        ? 'bg-red-100 border-2 border-red-500 text-red-800'
-                        : 'bg-gray-100 text-gray-600'
-                      : selectedAnswer === "true"
-                      ? 'bg-blue-100 border-2 border-blue-500 text-blue-800'
-                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      ? "true" === currentQ.answer.toString() ? "correct" : selectedAnswer === "true" ? "incorrect" : ""
+                      : selectedAnswer === "true" ? "selected" : ""
                   }`}
                 >
                   True
-                </MotionButton>
-                <MotionButton
+                </motion.button>
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => !showFeedback && handleAnswer("false")}
                   disabled={showFeedback}
-                  className={`w-full py-3 px-4 rounded-lg font-medium transition ${
+                  className={`option-button ${
                     showFeedback
-                      ? "false" === currentQ.answer.toString()
-                        ? 'bg-green-100 border-2 border-green-500 text-green-800'
-                        : selectedAnswer === "false"
-                        ? 'bg-red-100 border-2 border-red-500 text-red-800'
-                        : 'bg-gray-100 text-gray-600'
-                      : selectedAnswer === "false"
-                      ? 'bg-blue-100 border-2 border-blue-500 text-blue-800'
-                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      ? "false" === currentQ.answer.toString() ? "correct" : selectedAnswer === "false" ? "incorrect" : ""
+                      : selectedAnswer === "false" ? "selected" : ""
                   }`}
                 >
                   False
-                </MotionButton>
+                </motion.button>
               </>
             )}
           </div>
 
           {/* Feedback */}
           {showFeedback && (
-            <MotionDiv
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`mt-4 p-3 rounded-lg text-center font-semibold ${
-                isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}
+              className={`feedback-container ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}`}
             >
-              {isCorrect ? '✅ Correct!' : '❌ Incorrect!'}
-            </MotionDiv>
+              <div className="feedback-icon">
+                {isCorrect ? '✅' : '❌'}
+              </div>
+              <div className="feedback-title">
+                {isCorrect ? 'Correct!' : 'Incorrect!'}
+              </div>
+              
+              {/* Scenario Explanation for Level 3 */}
+              {currentQ.scenario && (
+                <div className="scenario-explanation">
+                  <strong>Explanation:</strong> {currentQ.scenario}
+                </div>
+              )}
+              
+              <div className="correct-answer">
+                Correct answer: {Array.isArray(currentQ.options) ? currentQ.answer : currentQ.answer.toString()}
+              </div>
+            </motion.div>
           )}
-        </MotionDiv>
+        </motion.div>
       </div>
     </div>
   );

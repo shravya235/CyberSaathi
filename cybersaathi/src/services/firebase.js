@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export default function Page() {
   return (
     <div>
@@ -7,7 +6,6 @@ export default function Page() {
     </div>
   );
 }
-=======
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
@@ -29,4 +27,3 @@ const googleProvider = new GoogleAuthProvider();
 
 // Export to use in your app
 export { auth, googleProvider };
->>>>>>> a819b60baedbdcb7c672092f9301774d258e6ceb

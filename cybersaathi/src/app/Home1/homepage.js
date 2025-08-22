@@ -9,7 +9,7 @@ export default function homepage() {
       >
         {/* Optional overlay */}
         <div className="w-full h-full bg-black bg-opacity-40 flex items-center justify-center">
-          <h1 className="text-white text-4xl font-bold">Welcome to Code Shakti</h1>
+          <h1 className="text-white text-4xl font-bold">Welcome to Cyber Saathi</h1>
         </div>
       </div>
       

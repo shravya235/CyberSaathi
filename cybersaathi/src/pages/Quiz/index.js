@@ -1,13 +1,11 @@
-"use client";
+"use client"; // ensures this runs as a client component
 
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
+import { FiLock, FiAward, FiBarChart2, FiPlay, FiRefreshCw } from "react-icons/fi";
 import QuizComponent from "../../components/Quiz/QuizComponent";
-
-// Dynamically import motion to avoid SSR issues
-const MotionDiv = dynamic(() => import("framer-motion").then(mod => mod.motion.div), {
-  ssr: false
-});
+import AnalyticsDashboard from "../../components/Quiz/AnalyticsDashboard";
+import "./Quiz.css";
 
 const levels = [
   { id: 1, title: "Level 1 - Basics", description: "True/False questions", unlocked: true },
@@ -19,6 +17,7 @@ export default function QuizPage() {
   const [unlockedLevels, setUnlockedLevels] = useState([1]);
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [quizResults, setQuizResults] = useState({});
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   useEffect(() => {
     // Load unlocked levels from localStorage if available
@@ -77,89 +76,104 @@ export default function QuizPage() {
     );
   }
 
+  if (showAnalytics) {
+    return (
+      <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-      <div className="max-w-4xl w-full">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">CyberSaathi Quiz</h1>
-        <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+    <div className="quiz-container">
+      <div className="quiz-content">
+        <h1 className="quiz-title">CyberSaathi Quiz</h1>
+        <p className="quiz-subtitle">
           Test your cybersecurity knowledge across three difficulty levels. Complete each level to unlock the next!
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="levels-grid">
           {levels.map((level) => {
             const isUnlocked = unlockedLevels.includes(level.id);
             const levelResult = quizResults[level.id];
             const isCompleted = levelResult && levelResult.score >= 60;
 
             return (
-              <MotionDiv
+              <motion.div
                 key={level.id}
                 whileHover={isUnlocked ? { scale: 1.02, y: -2 } : {}}
                 whileTap={isUnlocked ? { scale: 0.98 } : {}}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: level.id * 0.1 }}
-                className={`p-6 rounded-2xl shadow-lg cursor-pointer transition-all ${
-                  isUnlocked
-                    ? isCompleted
-                      ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
-                      : "bg-white hover:shadow-xl border-2 border-blue-200"
-                    : "bg-gray-100 text-gray-400"
-                }`}
-                onClick={() => isUnlocked && handleLevelSelect(level.id)}
-                role="button"
-                tabIndex={isUnlocked ? 0 : -1}
-                aria-label={isUnlocked ? `Start ${level.title}` : `${level.title} is locked`}
+                className={`level-card ${!isUnlocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`}
+                role="region"
+                aria-label={level.title}
               >
-                <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-white bg-opacity-20">
-                    <span className="text-2xl font-bold">{level.id}</span>
+                <div className="level-header">
+                  <div className="level-number">
+                    {level.id}
                   </div>
                   
-                  <h2 className="text-xl font-semibold mb-2">{level.title}</h2>
-                  <p className="text-sm mb-4 opacity-80">{level.description}</p>
+                  <h2 className="level-title">{level.title}</h2>
+                  <p className="level-description">{level.description}</p>
 
                   {isCompleted && (
-                    <div className="mb-4">
-                      <div className="text-sm font-semibold">Score: {levelResult.score}%</div>
-                      <div className="text-xs">
+                    <div className="level-stats">
+                      <div className="level-score">Score: {levelResult.score}%</div>
+                      <div className="level-correct">
                         {levelResult.correctAnswers}/{levelResult.totalQuestions} correct
                       </div>
                     </div>
                   )}
 
-                  {!isUnlocked ? (
-                    <MotionDiv
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1, y: [0, -3, 0] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                      className="text-sm font-semibold"
-                    >
-                      🔒 Complete previous level
-                    </MotionDiv>
-                  ) : (
-                    <button
-                      className={`px-4 py-2 rounded-lg font-semibold transition ${
-                        isCompleted
-                          ? "bg-white text-green-600 hover:bg-green-50"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
-                      }`}
-                    >
-                      {isCompleted ? "Play Again" : "Start Quiz"}
-                    </button>
-                  )}
+                  <div className="level-action">
+                    {!isUnlocked ? (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, y: [0, -3, 0] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="locked-message"
+                      >
+                        <FiLock className="inline" /> Complete previous level
+                      </motion.div>
+                    ) : (
+                      <button
+                        className={`start-button ${isCompleted ? 'secondary' : 'primary'}`}
+                        onClick={() => handleLevelSelect(level.id)}
+                      >
+                        {isCompleted ? (
+                          <>
+                            <FiRefreshCw /> Play Again
+                          </>
+                        ) : (
+                          <>
+                            <FiPlay /> Start Quiz
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </MotionDiv>
+              </motion.div>
             );
           })}
         </div>
-        </div>
-        
 
         {Object.keys(quizResults).length > 0 && (
-          <div className="mt-12 p-6 bg-white rounded-2xl shadow-lg">
-            </div>
-        )
-    } </div>
-    );
+          <div className="progress-section">
+            <h3 className="progress-title">Your Progress</h3>
+            <p className="progress-text">
+              You've completed {Object.keys(quizResults).length} level(s). Keep learning!
+            </p>
+            <button
+              onClick={() => setShowAnalytics(true)}
+              className="analytics-button"
+            >
+              <FiBarChart2 /> View Analytics Dashboard
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
+

@@ -1,13 +1,11 @@
-<<<<<<< HEAD
-import Navbar from "../Components/Navbar/Navbar";
-import homepage from "./Home/homepage";
+import Navbar from "@/components/Navbar/Navbar";  // ensure the path is correct
+import Homepage from "./Home1/homepage";  // capitalized since components should be PascalCase
+
 export default function Home() {
   return (
     <div>
-      
-      <homepage/>
+      <Navbar />
+      <Homepage />
     </div>
   );
 }
-=======
->>>>>>> a819b60baedbdcb7c672092f9301774d258e6ceb
