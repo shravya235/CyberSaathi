@@ -1,9 +1,9 @@
 "use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import styles from './Community.module.css';
+import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import styles from "./Community.module.css";
 
 // Updated expert data
 const experts = [
@@ -55,13 +55,11 @@ export default function Community() {
       <nav className={styles.navbar}>
         <div className={styles.logo}>CyberSaathi</div>
         <div className={styles.links}>
-          {navLinks.map(({ name, path }) => (
+          {navLinks.map(({ name, href }) => (
             <Link
-              key={path}
-              href={path}
-              className={
-                pathname === path ? styles.activeLink : styles.link
-              }
+              key={href}
+              href={href}
+              className={pathname === href ? styles.activeLink : styles.link}
             >
               {name}
             </Link>
@@ -72,17 +70,26 @@ export default function Community() {
       {/* Header */}
       <header className={styles.header}>
         <h1>Meet Our CyberSaathi Volunteers</h1>
-        <p>Dedicated experts committed to guiding you on your Cyber Safety journey!</p>
+        <p>
+          Dedicated experts committed to guiding you on your Cyber Safety
+          journey!
+        </p>
       </header>
 
       {/* Cards grid */}
       <section className={styles.cardGrid}>
         {experts.map((expert, idx) => (
           <article className={styles.card} key={idx}>
-            <img src={expert.avatar} alt={expert.name} className={styles.avatar} />
+            <img
+              src={expert.avatar}
+              alt={expert.name}
+              className={styles.avatar}
+            />
             <div className={styles.cardContent}>
               <h2 className={styles.name}>{expert.name}</h2>
-              <p className={styles.info}><strong>Email:</strong> {expert.email}</p>
+              <p className={styles.info}>
+                <strong>Email:</strong> {expert.email}
+              </p>
               <p className={styles.info}>
                 <strong>Phone:</strong>{" "}
                 <a href={`tel:${expert.phone}`} className={styles.link}>
@@ -90,7 +97,12 @@ export default function Community() {
                 </a>
               </p>
               <p>
-                <a href={expert.linkedin} target="_blank" rel="noopener noreferrer" className={styles.link}>
+                <a
+                  href={expert.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.link}
+                >
                   View LinkedIn Profile
                 </a>
               </p>
