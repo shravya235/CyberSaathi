@@ -1,22 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FiClock, FiCheck, FiX, FiArrowLeft, FiAward } from "react-icons/fi";
+import styles from "./QuizComponent.module.css";
 
-// Import quiz data and components
 import level1 from "../../Data/Quiz/level1";
 import level2 from "../../Data/Quiz/level2";
 import level3 from "../../Data/Quiz/level3";
 import ResultSummary from "@/components/Quiz/ResultSummary";
 import { recordQuizSession } from "../../utils/quizAnalytics";
-import "./QuizComponent.css";
 
-const QUIZ_DATA = {
-  1: level1,
-  2: level2,
-  3: level3
-};
+// Dynamically import motion for suspense boundary compatibility
+const MotionDiv = dynamic(() => import("framer-motion").then(mod => mod.motion.div), { ssr: false });
+const MotionButton = dynamic(() => import("framer-motion").then(mod => mod.motion.button), { ssr: false });
+
+const QUIZ_DATA = { 1: level1, 2: level2, 3: level3 };
 
 export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -30,6 +31,16 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
 
   const questions = QUIZ_DATA[levelId];
   const currentQ = questions[currentQuestion];
+
+  const pathname = usePathname();
+  const navLinks = [
+    { name: "Home", href: "/Home" },
+    { name: "Quiz", href: "/Quiz" },
+    { name: "Article", href: "/Article/article" },
+    { name: "About", href: "/About/about" },
+    { name: "Community", href: "/Community/community" },
+    { name: "Profile", href: "/Profile/profile" },
+  ];
 
   useEffect(() => {
     if (timeLeft > 0 && !showFeedback && !quizCompleted) {
@@ -72,7 +83,6 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
       } else {
         setQuizCompleted(true);
         const finalScore = (score + (correct ? 1 : 0)) / questions.length * 100;
-        // Always call onLevelComplete to record results, regardless of passing score
         onLevelComplete(levelId, finalScore, userAnswers);
       }
     }, 1500);
@@ -110,74 +120,88 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
   }
 
   return (
-    <div className="quiz-component-container">
-      <div className="quiz-content-wrapper">
-        {/* Header */}
-        <div className="quiz-header">
-          <div className="flex justify-between items-center mb-4">
+    <div className={styles.page}>
+      {/* Navbar */}
+      <nav className={styles.navbar}>
+        <div className={styles.logo}>CyberSaathi</div>
+        <div className={styles.links}>
+          {navLinks.map(({ name, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className={pathname === href ? styles.activeLink : styles.link}
+            >
+              {name}
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      {/* Quiz Content */}
+      <main className={styles.container}>
+        <div className={styles.quizHeader}>
+          <div className={styles.quizHeaderTop}>
             <button
               onClick={onBackToLevels}
-              className="back-button"
+              className={styles.backButton}
             >
               <FiArrowLeft /> Back to Levels
             </button>
-            <div className="question-counter">
+            <div className={styles.questionCounter}>
               Question {currentQuestion + 1} of {questions.length}
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="progress-container">
+          <div className={styles.progressContainer}>
             <div
-              className="progress-bar"
+              className={styles.progressBar}
               style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
             />
           </div>
 
           {/* Timer */}
-          <div className="timer-container">
-            <div className={`timer ${timeLeft <= 10 ? 'warning' : ''}`}>
+          <div className={styles.timerContainer}>
+            <div className={`${styles.timer} ${timeLeft <= 10 ? styles.warning : ''}`}>
               <FiClock /> {timeLeft}s
             </div>
           </div>
 
           {/* Score */}
-          <div className="text-center">
-            <span className="score-badge">
-              Score: {score}
-            </span>
+          <div className={styles.scoreBadge}>
+            Score: {score}
           </div>
         </div>
 
-        {/* Question */}
-        <motion.div
+        {/* Question Card */}
+        <MotionDiv
           key={currentQuestion}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="question-card"
+          className={styles.questionCard}
         >
-          <h2 className="question-text">
+          <h2 className={styles.questionText}>
             {currentQ.question}
           </h2>
 
           {/* Answer Options */}
-          <div className="options-container">
+          <div className={styles.optionsContainer}>
             {Array.isArray(currentQ.options) ? (
               // Multiple Choice
               currentQ.options.map((option, index) => {
-                let buttonClass = "option-button";
+                let buttonClass = styles.optionButton;
                 if (showFeedback) {
                   if (option === currentQ.answer) {
-                    buttonClass += " correct";
+                    buttonClass += ` ${styles.correct}`;
                   } else if (option === selectedAnswer) {
-                    buttonClass += " incorrect";
+                    buttonClass += ` ${styles.incorrect}`;
                   }
                 } else if (selectedAnswer === option) {
-                  buttonClass += " selected";
+                  buttonClass += ` ${styles.selected}`;
                 }
 
                 return (
-                  <motion.button
+                  <MotionButton
                     key={index}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -186,70 +210,72 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
                     className={buttonClass}
                   >
                     {option}
-                  </motion.button>
+                  </MotionButton>
                 );
               })
             ) : (
               // True/False
               <>
-                <motion.button
+                <MotionButton
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => !showFeedback && handleAnswer("true")}
                   disabled={showFeedback}
-                  className={`option-button ${
+                  className={`${styles.optionButton} ${
                     showFeedback
-                      ? "true" === currentQ.answer.toString() ? "correct" : selectedAnswer === "true" ? "incorrect" : ""
-                      : selectedAnswer === "true" ? "selected" : ""
+                      ? "true" === currentQ.answer.toString() ? styles.correct : selectedAnswer === "true" ? styles.incorrect : ""
+                      : selectedAnswer === "true" ? styles.selected : ""
                   }`}
                 >
                   True
-                </motion.button>
-                <motion.button
+                </MotionButton>
+                <MotionButton
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => !showFeedback && handleAnswer("false")}
                   disabled={showFeedback}
-                  className={`option-button ${
+                  className={`${styles.optionButton} ${
                     showFeedback
-                      ? "false" === currentQ.answer.toString() ? "correct" : selectedAnswer === "false" ? "incorrect" : ""
-                      : selectedAnswer === "false" ? "selected" : ""
+                      ? "false" === currentQ.answer.toString() ? styles.correct : selectedAnswer === "false" ? styles.incorrect : ""
+                      : selectedAnswer === "false" ? styles.selected : ""
                   }`}
                 >
                   False
-                </motion.button>
+                </MotionButton>
               </>
             )}
           </div>
 
           {/* Feedback */}
           {showFeedback && (
-            <motion.div
+            <MotionDiv
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`feedback-container ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}`}
+              className={`${styles.feedbackContainer} ${
+                isCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect
+              }`}
             >
-              <div className="feedback-icon">
+              <div className={styles.feedbackIcon}>
                 {isCorrect ? '✅' : '❌'}
               </div>
-              <div className="feedback-title">
+              <div className={styles.feedbackTitle}>
                 {isCorrect ? 'Correct!' : 'Incorrect!'}
               </div>
               
               {/* Scenario Explanation for Level 3 */}
               {currentQ.scenario && (
-                <div className="scenario-explanation">
+                <div className={styles.scenarioExplanation}>
                   <strong>Explanation:</strong> {currentQ.scenario}
                 </div>
               )}
               
-              <div className="correct-answer">
+              <div className={styles.correctAnswer}>
                 Correct answer: {Array.isArray(currentQ.options) ? currentQ.answer : currentQ.answer.toString()}
               </div>
-            </motion.div>
+            </MotionDiv>
           )}
-        </motion.div>
-      </div>
+        </MotionDiv>
+      </main>
     </div>
   );
 }
