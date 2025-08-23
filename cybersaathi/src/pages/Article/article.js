@@ -1,72 +1,40 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-
-const safetyTips = [
-  "Beware of phishing emails targeting your personal info.",
-  "Keep your software and antivirus up to date.",
-  "Use strong, unique passwords and enable two-factor authentication.",
-  "Avoid clicking unknown links especially from untrusted sources.",
-  "Regularly back up critical data securely.",
-];
+import React from "react";
 
 export default function Article() {
-  const [threatFeed, setThreatFeed] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  const fetchThreatFeed = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const response = await fetch('/api/threats');
-      if (!response.ok) throw new Error("Failed to fetch threat feed");
-      const data = await response.json();
-      setThreatFeed(data.recentThreats || []);
-      setLoading(false);
-    } catch (e) {
-      setError("Failed to load threat feed");
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchThreatFeed();
-    const interval = setInterval(fetchThreatFeed, 300000); // Refresh every 5 minutes
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <main style={styles.container}>
-      {/* Threat Feed Section */}
-      <section style={styles.feedSection}>
-        <h2 style={styles.feedTitle}>Live Cybercrime Threat Intelligence Feed</h2>
-        {loading && <p>Loading recent threats...</p>}
-        {error && <p style={{color: "red"}}>{error}</p>}
-        {!loading && !error && threatFeed.length === 0 && <p>No recent threats found.</p>}
+      <h1 style={styles.header}>Safety and Security in the Digital Age</h1>
 
-        {!loading && !error && (
-          <ul style={styles.feedList}>
-            {threatFeed.map((incident, idx) => (
-              <li key={idx} style={styles.feedItem}>
-                <strong>{incident.type || "Threat"}</strong>:{" "}
-                {incident.description || incident.title || "Details unavailable."}
-                {incident.date && (
-                  <span style={styles.feedDate}>{incident.date}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+      <section style={styles.section}>
+        <h2 style={styles.subheader}>The Growing Challenge of Cyber Fraud in India</h2>
+        <p style={styles.paragraph}>
+          With cyber fraud cases rapidly increasing in India—from phishing emails and fake OTP calls to UPI scams and identity theft—different demographics such as students, professionals, homemakers, rural users, and senior citizens face unique risks and challenges.
+        </p>
+        <p style={styles.paragraph}>
+          Your task is to design an innovative and adaptable platform that raises awareness, educates users, and empowers them to recognize, prevent, and respond to such threats.
+        </p>
+      </section>
 
-        <div style={styles.tipsBox}>
-          <h3>Actionable Safety Tips</h3>
-          <ul>
-            {safetyTips.map((tip, i) => (
-              <li key={i}>{tip}</li>
-            ))}
-          </ul>
-        </div>
+      <section style={styles.section}>
+        <h2 style={styles.subheader}>Our Cyber Safety Mission</h2>
+        <p style={styles.paragraph}>
+          The solution should make cyber safety simple, relatable, and trustworthy, while remaining flexible enough to reach diverse groups.
+        </p>
+        <p style={styles.paragraph}>
+          By educating and empowering users, we aim to reduce the risks posed by increasingly sophisticated cyberattacks and build a safer digital community for all.
+        </p>
+      </section>
+
+      <section style={styles.section}>
+        <h2 style={styles.subheader}>Key Focus Areas</h2>
+        <ul style={styles.list}>
+          <li>Raising awareness through clear, accessible information tailored to all user groups.</li>
+          <li>Providing tools and resources that enable recognition and prevention of cyber threats.</li>
+          <li>Delivering timely, actionable updates on emerging cybercrime incidents.</li>
+          <li>Fostering a trustworthy platform where users feel supported to report and respond to threats.</li>
+        </ul>
       </section>
     </main>
   );
@@ -74,46 +42,42 @@ export default function Article() {
 
 const styles = {
   container: {
-    maxWidth: 800,
-    margin: '3rem auto',
-    padding: '0 1.5rem',
+    maxWidth: 900,
+    margin: "3rem auto",
+    padding: "0 2rem",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    color: '#222',
-  },
-  feedSection: {
-    backgroundColor: "#f0f4ff",
+    color: "#1d1d1d",
+    lineHeight: 1.6,
+    backgroundColor: "#f9fbff",
     borderRadius: "12px",
-    padding: "1.5rem 2rem",
-    boxShadow: "0 4px 20px rgba(13,64,128,0.15)",
+    boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
   },
-  feedTitle: {
-    color: "#0D47A1",
+  header: {
+    fontSize: "2.8rem",
     fontWeight: "700",
+    color: "#0d47a1",
+    marginBottom: "1.2rem",
+    textAlign: "center",
+  },
+  section: {
+    marginBottom: "2.2rem",
+  },
+  subheader: {
     fontSize: "1.8rem",
-    marginBottom: "1rem",
+    fontWeight: "600",
+    color: "#0a3c91",
+    marginBottom: "0.8rem",
+    borderBottom: "3px solid #0d47a1",
+    paddingBottom: "0.3rem",
   },
-  feedList: {
-    listStyleType: "none",
-    paddingLeft: 0,
-    marginBottom: "1.5rem",
+  paragraph: {
+    fontSize: "1.15rem",
+    marginBottom: "1.2rem",
   },
-  feedItem: {
-    backgroundColor: "white",
-    padding: "0.8rem 1rem",
-    borderRadius: "8px",
-    marginBottom: "0.75rem",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  },
-  feedDate: {
-    display: "block",
-    fontSize: "0.85rem",
-    color: "#607d8b",
-    marginTop: "0.3rem",
-  },
-  tipsBox: {
-    backgroundColor: "white",
-    borderRadius: "10px",
-    padding: "1rem 1.5rem",
-    boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+  list: {
+    fontSize: "1.15rem",
+    paddingLeft: "1.25rem",
+    listStyleType: "disc",
+    color: "#333",
   },
 };
