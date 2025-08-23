@@ -8,7 +8,7 @@ export default function Navbar() {
   const closeMenu = () => setMobileOpen(false);
 
   return (
-    <nav className="text-white w-full bg-black shadow px-6 py-3 sticky top-0 z-50">
+    <nav className="text-white w-full bg-blue-950 shadow px-6 py-3 sticky top-0 z-50 m-1 rounded-md border">
       <div className="text-black container mx-auto flex items-center justify-between">
         {/* Left side Logo */}
         <Logo />

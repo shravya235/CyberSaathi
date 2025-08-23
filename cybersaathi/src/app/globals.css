@@ -17,6 +17,15 @@
     --foreground: #ededed;
   }
 } */
+ .hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Works for Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
 
 body {
   background: var(--background);
