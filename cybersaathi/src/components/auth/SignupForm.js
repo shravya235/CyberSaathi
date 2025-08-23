@@ -55,6 +55,7 @@ const SignupForm = () => {
       await signInWithPopup(auth, googleProvider);
       setMessage("Successfully signed up with Google!");
       // Redirect logic here if needed
+      router.push("/Home");
     } catch (err) {
       setError(err.message);
     }
