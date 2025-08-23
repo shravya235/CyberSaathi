@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiClock, FiCheck, FiX, FiArrowLeft, FiAward } from "react-icons/fi";
+import { FiClock, FiArrowLeft } from "react-icons/fi";
 
 // Import quiz data and components
 import level1 from "../../Data/Quiz/level1";
 import level2 from "../../Data/Quiz/level2";
 import level3 from "../../Data/Quiz/level3";
 import ResultSummary from "@/components/Quiz/ResultSummary";
-import { recordQuizSession } from "../../utils/quizAnalytics";
 import "./QuizComponent.css";
 
 const QUIZ_DATA = {
@@ -31,20 +30,12 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
   const questions = QUIZ_DATA[levelId];
   const currentQ = questions[currentQuestion];
 
-  useEffect(() => {
-    if (timeLeft > 0 && !showFeedback && !quizCompleted) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !showFeedback) {
-      handleAnswer(null); // Time's up
-    }
-  }, [timeLeft, showFeedback, quizCompleted]);
-
+  // Move handleAnswer above useEffect so it can be added to dependencies
   const handleAnswer = (answer) => {
     const correct = Array.isArray(currentQ.options) 
       ? answer === currentQ.answer
       : answer === currentQ.answer.toString();
-    
+
     setIsCorrect(correct);
     setSelectedAnswer(answer);
     setShowFeedback(true);
@@ -53,7 +44,6 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
       setScore(score + 1);
     }
 
-    // Record user answer
     setUserAnswers(prev => [...prev, {
       questionId: currentQ.id,
       question: currentQ.question,
@@ -72,11 +62,19 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
       } else {
         setQuizCompleted(true);
         const finalScore = (score + (correct ? 1 : 0)) / questions.length * 100;
-        // Always call onLevelComplete to record results, regardless of passing score
         onLevelComplete(levelId, finalScore, userAnswers);
       }
     }, 1500);
   };
+
+  useEffect(() => {
+    if (timeLeft > 0 && !showFeedback && !quizCompleted) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && !showFeedback) {
+      handleAnswer(null); // Time's up
+    }
+  }, [timeLeft, showFeedback, quizCompleted, handleAnswer]);
 
   const handleRetry = () => {
     setCurrentQuestion(0);
@@ -103,7 +101,7 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
         onContinue={passed ? onBackToLevels : handleRetry}
         onViewAnalytics={(analytics) => {
           console.log('Analytics data:', analytics);
-          // This will be integrated with the analytics system later
+          // Integration point for analytics
         }}
       />
     );
@@ -115,10 +113,7 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
         {/* Header */}
         <div className="quiz-header">
           <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={onBackToLevels}
-              className="back-button"
-            >
+            <button onClick={onBackToLevels} className="back-button">
               <FiArrowLeft /> Back to Levels
             </button>
             <div className="question-counter">
@@ -135,10 +130,8 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
           </div>
 
           {/* Timer */}
-          <div className="timer-container">
-            <div className={`timer ${timeLeft <= 10 ? 'warning' : ''}`}>
-              <FiClock /> {timeLeft}s
-            </div>
+          <div className={`timer ${timeLeft <= 10 ? 'warning' : ''}`}>
+            <FiClock /> {timeLeft}s
           </div>
 
           {/* Score */}
@@ -163,7 +156,6 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
           {/* Answer Options */}
           <div className="options-container">
             {Array.isArray(currentQ.options) ? (
-              // Multiple Choice
               currentQ.options.map((option, index) => {
                 let buttonClass = "option-button";
                 if (showFeedback) {
@@ -190,7 +182,6 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
                 );
               })
             ) : (
-              // True/False
               <>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -235,14 +226,13 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
               <div className="feedback-title">
                 {isCorrect ? 'Correct!' : 'Incorrect!'}
               </div>
-              
-              {/* Scenario Explanation for Level 3 */}
+
               {currentQ.scenario && (
                 <div className="scenario-explanation">
                   <strong>Explanation:</strong> {currentQ.scenario}
                 </div>
               )}
-              
+
               <div className="correct-answer">
                 Correct answer: {Array.isArray(currentQ.options) ? currentQ.answer : currentQ.answer.toString()}
               </div>

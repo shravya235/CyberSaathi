@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../services/firebase";
 import styles from "./LoginForm.module.css";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -54,7 +55,7 @@ const LoginForm = () => {
         className={styles.googleButton}
         disabled={loading}
       >
-        <img
+        <image
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
           alt="Google logo"
         />
