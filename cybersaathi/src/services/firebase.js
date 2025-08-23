@@ -1,3 +1,11 @@
+export default function Page() {
+  return (
+    <div>
+      <h1>About Page</h1>
+      {/* Your content */}
+    </div>
+  );
+}
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
