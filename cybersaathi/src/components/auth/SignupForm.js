@@ -8,7 +8,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth, googleProvider } from "../../services/firebase";
-import styles from "./SignupForm.module.css";
+import styles from "./signupForm.module.css";
 import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
