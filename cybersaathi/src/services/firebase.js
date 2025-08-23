@@ -1,29 +1,18 @@
-export default function Page() {
-  return (
-    <div>
-      <h1>About Page</h1>
-      {/* Your content */}
-    </div>
-  );
-}
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDROsPkWqf0yQ98MHM2xEYgxMTDVqAliSM",
-  authDomain: "cybersaathi-a33f0.firebaseapp.com",
-  projectId: "cybersaathi-a33f0",
-  storageBucket: "cybersaathi-a33f0.firebasestorage.app",
-  messagingSenderId: "538224292604",
-  appId: "1:538224292604:web:527df83328eb5a793d5d79",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase app
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase Authentication and providers
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Export to use in your app
 export { auth, googleProvider };

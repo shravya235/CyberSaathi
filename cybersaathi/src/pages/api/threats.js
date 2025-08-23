@@ -27,6 +27,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ recentThreats });
   } catch (error) {
-    res.status(500).json({ error: "Server error fetching threat feed" });
+    console.error("Error fetching threat data:", error);
+    res.status(500).json({ error: "An unexpected error occurred." });
   }
 }

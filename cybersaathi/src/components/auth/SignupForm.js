@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -9,7 +8,6 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "../../services/firebase";
 import styles from "./signupForm.module.css";
-import Image from 'next/image';
 import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
@@ -73,7 +71,7 @@ const SignupForm = () => {
         className={styles.googleButton}
         disabled={loading}
       >
-        <image
+        <img
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
           alt="Google logo"
         />
