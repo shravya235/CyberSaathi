@@ -5,7 +5,6 @@ import NavLinks from "./Navlinks";
 import ProfileLink from "./profile";
 import LanguageDropdown from "./language";
 import { useLanguage } from "../../hooks/languagehook";
-
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { language, changeLanguage } = useLanguage();
@@ -13,7 +12,7 @@ export default function Navbar() {
   const closeMenu = () => setMobileOpen(false);
 
   return (
-    <nav className="text-black w-full bg-white shadow px-6 py-3 sticky top-0 z-50">
+    <nav className="text-white w-full bg-black shadow px-6 py-3 sticky top-0 z-50">
       <div className="text-black container mx-auto flex items-center justify-between">
         {/* Left side Logo */}
         <Logo />
@@ -47,7 +46,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white shadow-lg py-4 px-6 flex flex-col space-y-4">
+        <div className="md:hidden bg-black shadow-lg py-4 px-6 flex flex-col space-y-4">
           <NavLinks closeMenu={closeMenu} />
           <LanguageDropdown language={language} changeLanguage={changeLanguage} />
           <ProfileLink closeMenu={closeMenu} />

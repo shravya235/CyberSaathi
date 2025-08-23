@@ -1,11 +1,10 @@
-import Navbar from "@/components/Navbar/Navbar";  // ensure the path is correct
-import Homepage from "./Home1/homepage";  // capitalized since components should be PascalCase
+import Homepage from "./Home/Page";  
+import Landing from "@/pages/Landing/landing";
 
 export default function Home() {
   return (
     <div>
-      <Navbar />
-      <Homepage />
+      <Landing/>
     </div>
   );
 }
