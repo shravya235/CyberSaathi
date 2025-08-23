@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../services/firebase";
-import styles from "./LoginForm.module.css";
+import styles from "./loginForm.module.css";
 import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
