@@ -2,16 +2,29 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FiX, FiDownload, FiTrash2, FiRefreshCw, FiTrendingUp, FiAward, FiClock, FiBarChart2 } from "react-icons/fi";
-// Import analytics utilities
+import styles from "./AnalyticsDashboard.module.css";
+
+// Import analytics utilities (make sure these are in your utils)
 import { getProgressAnalytics, getLevelAnalytics, getStreakData, exportAnalyticsData, clearAnalyticsData } from "../../utils/quizAnalytics";
-import "./AnalyticsDashboard.css";
 
 export default function AnalyticsDashboard({ onClose }) {
   const [analytics, setAnalytics] = useState(null);
   const [levelAnalytics, setLevelAnalytics] = useState({});
   const [streakData, setStreakData] = useState({});
   const [selectedLevel, setSelectedLevel] = useState(null);
+
+  const pathname = usePathname();
+  const navLinks = [
+    { name: "Home", href: "/Home" },
+    { name: "Quiz", href: "/Quiz" },
+    { name: "Article", href: "/Article/article" },
+    { name: "About", href: "/About/about" },
+    { name: "Community", href: "/Community/community" },
+    { name: "Profile", href: "/Profile/profile" },
+  ];
 
   useEffect(() => {
     loadAnalytics();
@@ -57,25 +70,52 @@ export default function AnalyticsDashboard({ onClose }) {
 
   if (!analytics) {
     return (
-      <div className="analytics-container">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading analytics...</p>
-        </div>
+      <div className={styles.page}>
+        <nav className={styles.navbar}>
+          <div className={styles.logo}>CyberSaathi</div>
+          <div className={styles.links}>
+            {navLinks.map(({ name, href }) => (
+              <Link
+                key={href}
+                href={href}
+                className={pathname === href ? styles.activeLink : styles.link}
+              >
+                {name}
+              </Link>
+            ))}
+          </div>
+        </nav>
+        <main className={styles.container}>
+          <p className={styles.paragraph}>Loading analytics...</p>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="analytics-container">
-      <div className="analytics-wrapper">
-        {/* Header */}
-        <div className="analytics-header">
-          <div className="analytics-header-content">
-            <h1 className="analytics-title">Quiz Analytics Dashboard</h1>
+    <div className={styles.page}>
+      <nav className={styles.navbar}>
+        <div className={styles.logo}>CyberSaathi</div>
+        <div className={styles.links}>
+          {navLinks.map(({ name, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className={pathname === href ? styles.activeLink : styles.link}
+            >
+              {name}
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      <main className={styles.container}>
+        <div className={styles.analyticsHeader}>
+          <div className={styles.analyticsHeaderContent}>
+            <h1 className={styles.title}>Quiz Analytics Dashboard</h1>
             <button
               onClick={onClose}
-              className="close-button"
+              className={styles.closeButton}
               aria-label="Close analytics"
             >
               <FiX />
@@ -83,109 +123,111 @@ export default function AnalyticsDashboard({ onClose }) {
           </div>
 
           {/* Overall Stats */}
-          <div className="stats-grid">
-            <div className="stat-card stat-card-blue">
-              <div className="stat-value stat-value-blue">{analytics.totalQuizzes}</div>
-              <div className="stat-label stat-label-blue">Total Quizzes</div>
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{analytics.totalQuizzes}</div>
+              <div className={styles.statLabel}>Total Quizzes</div>
             </div>
             
-            <div className="stat-card stat-card-green">
-              <div className="stat-value stat-value-green">{analytics.overallAccuracy}%</div>
-              <div className="stat-label stat-label-green">Overall Accuracy</div>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{analytics.overallAccuracy}%</div>
+              <div className={styles.statLabel}>Overall Accuracy</div>
             </div>
             
-            <div className="stat-card stat-card-purple">
-              <div className="stat-value stat-value-purple">{analytics.bestScore}%</div>
-              <div className="stat-label stat-label-purple">Best Score</div>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{analytics.bestScore}%</div>
+              <div className={styles.statLabel}>Best Score</div>
             </div>
             
-            <div className="stat-card stat-card-orange">
-              <div className="stat-value stat-value-orange">{Math.round(analytics.totalTimeSpent / 60)}m</div>
-              <div className="stat-label stat-label-orange">Total Time</div>
+            <div className={styles.statCard}>
+              <div className={styles.statValue}>{Math.round(analytics.totalTimeSpent / 60)}m</div>
+              <div className={styles.statLabel}>Total Time</div>
             </div>
           </div>
 
           {/* Streak Information */}
-          <div className="streak-section">
-            <h3 className="streak-title">
+          <div className={styles.section}>
+            <h2 className={styles.heading}>
               <FiAward /> Current Streak
-            </h3>
-            <div className="streak-value">{streakData.currentStreak} days</div>
-            <p className="streak-subtext">Longest streak: {streakData.longestStreak} days</p>
+            </h2>
+            <div className={styles.streakValue}>{streakData.currentStreak} days</div>
+            <p className={styles.streakSubtext}>Longest streak: {streakData.longestStreak} days</p>
           </div>
         </div>
 
         {/* Level-wise Analytics */}
-        <div className="levels-grid">
-          {[1, 2, 3].map(levelId => {
-            const levelStats = levelAnalytics[levelId];
-            if (!levelStats) return null;
+        <div className={styles.section}>
+          <h2 className={styles.heading}>Level Performance</h2>
+          <div className={styles.levelsGrid}>
+            {[1, 2, 3].map(levelId => {
+              const levelStats = levelAnalytics[levelId];
+              if (!levelStats) return null;
 
-            return (
-              <motion.div
-                key={levelId}
-                whileHover={{ scale: 1.02 }}
-                className="level-card"
-                onClick={() => setSelectedLevel(selectedLevel === levelId ? null : levelId)}
-              >
-                <div className="level-header">
-                  <div className="level-number">
-                    {levelId}
+              return (
+                <motion.div
+                  key={levelId}
+                  whileHover={{ scale: 1.02 }}
+                  className={styles.levelCard}
+                  onClick={() => setSelectedLevel(selectedLevel === levelId ? null : levelId)}
+                >
+                  <div className={styles.levelHeader}>
+                    <div className={styles.levelNumber}>{levelId}</div>
+                    <h3 className={styles.levelTitle}>Level {levelId}</h3>
+                    
+                    <div className={styles.levelStats}>
+                      <div>
+                        <div className={styles.statNumber}>{levelStats.totalAttempts}</div>
+                        <div className={styles.statLabel}>Attempts</div>
+                      </div>
+                      <div>
+                        <div className={styles.statNumber}>{levelStats.completionRate}%</div>
+                        <div className={styles.statLabel}>Completion</div>
+                      </div>
+                    </div>
+                    
+                    {selectedLevel === levelId && (
+                      <div className={styles.levelDetails}>
+                        <div>Best: {levelStats.bestScore}%</div>
+                        <div>Average: {levelStats.averageScore}%</div>
+                        <div>Latest: {levelStats.latestScore}%</div>
+                      </div>
+                    )}
                   </div>
-                  <h3 className="level-title">Level {levelId}</h3>
-                  
-                  <div className="level-stats">
-                    <div>
-                      <div className="stat-number stat-number-blue">{levelStats.totalAttempts}</div>
-                      <div className="stat-label-gray">Attempts</div>
-                    </div>
-                    <div>
-                      <div className="stat-number stat-number-green">{levelStats.completionRate}%</div>
-                      <div className="stat-label-gray">Completion</div>
-                    </div>
-                  </div>
-                  
-                  {selectedLevel === levelId && (
-                    <div className="level-details">
-                      <div className="detail-text">Best: {levelStats.bestScore}%</div>
-                      <div className="detail-text">Average: {levelStats.averageScore}%</div>
-                      <div className="detail-text">Latest: {levelStats.latestScore}%</div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Progress Chart Placeholder */}
-        <div className="chart-section">
-          <h3 className="chart-title">Progress Over Time</h3>
-          <div className="chart-placeholder">
-            <p className="placeholder-text">Progress chart visualization would be implemented here</p>
+        <div className={styles.section}>
+          <h2 className={styles.heading}>Progress Over Time</h2>
+          <div className={styles.chartPlaceholder}>
+            <p>Progress chart visualization would be implemented here</p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="actions-section">
-          <div className="actions-grid">
+        <div className={styles.section}>
+          <h2 className={styles.heading}>Actions</h2>
+          <div className={styles.actionsGrid}>
             <button
               onClick={handleExport}
-              className="action-button"
+              className={styles.actionButton}
             >
               <FiDownload /> Export Data
             </button>
             
             <button
               onClick={handleClear}
-              className="action-button action-button-red"
+              className={styles.actionButtonRed}
             >
               <FiTrash2 /> Clear Data
             </button>
             
             <button
               onClick={loadAnalytics}
-              className="action-button action-button-gray"
+              className={styles.actionButtonGray}
             >
               <FiRefreshCw /> Refresh
             </button>
@@ -193,18 +235,16 @@ export default function AnalyticsDashboard({ onClose }) {
         </div>
 
         {/* Quick Tips */}
-        <div className="tips-section">
-          <h3 className="tips-title">
-            <FiTrendingUp /> Improvement Tips
-          </h3>
-          <ul className="tips-list">
-            <li>• Practice regularly to maintain your streak</li>
-            <li>• Review questions you got wrong</li>
-            <li>• Aim for consistency across all levels</li>
-            <li>• Take your time to understand scenarios</li>
+        <div className={styles.section}>
+          <h2 className={styles.heading}><FiTrendingUp /> Improvement Tips</h2>
+          <ul className={styles.list}>
+            <li>Practice regularly to maintain your streak</li>
+            <li>Review questions you got wrong</li>
+            <li>Aim for consistency across all levels</li>
+            <li>Take your time to understand scenarios</li>
           </ul>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
