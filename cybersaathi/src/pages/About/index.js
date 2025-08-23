@@ -1,9 +1,11 @@
 // src/pages/About/index.js
 
 import React from 'react';
+import Navbar from '@/components/Navbar/Navbar';
 
 const About = () => (
   <div style={styles.container}>
+    <Navbar/>
     <h1 style={styles.title}>About CyberSaathi</h1>
     <p style={styles.intro}>
       <strong>CyberSaathi</strong> is your trusted companion for navigating the digital world safely and securely.

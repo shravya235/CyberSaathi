@@ -24,8 +24,7 @@ export default function Page() {
             letterSpacing: '.05em'
           }}
         >
-          WHY PROFILE SECTION<br />
-          DON'T YOU KNOW WHO YOU ARE
+          UNDER DEVELOPMENT 
         </div>
       </div>
     </div>
