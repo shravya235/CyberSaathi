@@ -4,11 +4,10 @@ export default function NavLinks({ closeMenu }) {
   const links = [
     { name: "Home", href: "/Home" },
     { name: "Quiz", href: "/Quiz" },
-    { name: "Article", href: "/article" },
+    { name: "Article", href: "/Article/article" },
     { name: "About", href: "/About" },
     { name: "Community", href: "/Community/community" },
     { name: "profile", href: "/Profile/profile" },
-    { name: "contact", href: "/"}
   ];
 
   return (

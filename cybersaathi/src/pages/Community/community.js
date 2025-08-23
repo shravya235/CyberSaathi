@@ -41,12 +41,12 @@ export default function Community() {
   const pathname = usePathname();
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Quiz", path: "/Quiz" },
-    { name: "Article", path: "/Article" },
-    { name: "About", path: "/About" },
-    { name: "Community", path: "/Community/community" },
-    { name: "Profile", path: "/Profile" },
+    { name: "Home", href: "/Home" },
+    { name: "Quiz", href: "/Quiz" },
+    { name: "Article", href: "/Article/article" },
+    { name: "About", href: "/About" },
+    { name: "Community", href: "/Community/community" },
+    { name: "profile", href: "/Profile/profile" },
   ];
 
   return (
@@ -72,7 +72,7 @@ export default function Community() {
       {/* Header */}
       <header className={styles.header}>
         <h1>Meet Our CyberSaathi Volunteers</h1>
-        <p>Dedicated experts committed to guiding you on your cyber safety journey.</p>
+        <p>Dedicated experts committed to guiding you on your Cyber Safety journey!</p>
       </header>
 
       {/* Cards grid */}
