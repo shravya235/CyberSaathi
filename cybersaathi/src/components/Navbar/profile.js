@@ -1,11 +1,10 @@
 import Link from "next/link";
 
-export default function ProfileLink({ closeMenu }) {
+export default function ProfileLink() {
   return (
     <Link
-      href="/profile"
+      href="/Profile/profile"
       className="text-white hover:text-blue-700 font-medium"
-      onClick={closeMenu}
     >
       Profile
     </Link>

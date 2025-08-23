@@ -6,7 +6,8 @@ export default function NavLinks({ closeMenu }) {
     { name: "Quiz", href: "/Quiz" },
     { name: "Article", href: "/article" },
     { name: "About", href: "/about" },
-    { name: "Community", href: "/Community" },
+    { name: "Community", href: "/Community/community" },
+    { name: "profile", href: "/Profile/profile" },
   ];
 
   return (

@@ -21,7 +21,7 @@ export default function Navbar() {
         <div className="hidden md:flex space-x-6 items-center">
           <NavLinks closeMenu={closeMenu} />
           <LanguageDropdown language={language} changeLanguage={changeLanguage} />
-          <ProfileLink closeMenu={closeMenu} />
+          
         </div>
 
         {/* Mobile hamburger */}
@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className="md:hidden bg-black shadow-lg py-4 px-6 flex flex-col space-y-4">
           <NavLinks closeMenu={closeMenu} />
           <LanguageDropdown language={language} changeLanguage={changeLanguage} />
-          <ProfileLink closeMenu={closeMenu} />
+          
         </div>
       )}
     </nav>
