@@ -2,10 +2,11 @@ import Link from "next/link";
 
 export default function NavLinks({ closeMenu }) {
   const links = [
-    { name: "Home", href: "/" },
-    { name: "Quiz", href: "/quiz" },
+    { name: "Home", href: "/Home" },
+    { name: "Quiz", href: "/Quiz" },
+    { name: "Article", href: "/article" },
     { name: "About", href: "/about" },
-    { name: "Community", href: "/community" },
+    { name: "Community", href: "/Community" },
   ];
 
   return (

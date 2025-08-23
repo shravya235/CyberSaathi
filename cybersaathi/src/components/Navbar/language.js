@@ -21,7 +21,7 @@ export default function LanguageDropdown({ language, changeLanguage }) {
         {languages.find((l) => l.code === language)?.label || "Language"}
       </button>
       {open && (
-        <ul className="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-50">
+        <ul className="text-blue-50 absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg z-50">
           {languages.map(({ code, label }) => (
             <li key={code}>
               <button
@@ -29,7 +29,7 @@ export default function LanguageDropdown({ language, changeLanguage }) {
                   changeLanguage(code);
                   setOpen(false);
                 }}
-                className={`block w-full px-4 py-2 hover:bg-blue-100 text-left ${
+                className={`text-black block w-full px-4 py-2 hover:bg-blue-100 text-left ${
                   language === code ? "font-bold" : ""
                 }`}
               >

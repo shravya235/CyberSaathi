@@ -23,7 +23,7 @@ const LoginForm = () => {
       await signInWithEmailAndPassword(auth, email, password);
       setMessage("Login successful! Redirecting...");
       // Example: Redirect to homepage after login
-      router.push("/");
+      router.push("/Home");
     } catch (err) {
       setError(err.message);
     }
@@ -37,7 +37,7 @@ const LoginForm = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       setMessage("Successfully logged in with Google!");
-      router.push("/");
+      router.push("/Home");
     } catch (err) {
       setError(err.message);
     }
