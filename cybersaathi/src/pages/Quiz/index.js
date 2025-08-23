@@ -167,7 +167,7 @@ export default function QuizPage() {
           <div className="progress-section">
             <h3 className="progress-title">Your Progress</h3>
             <p className="progress-text">
-              You've completed {Object.keys(quizResults).length} level(s). Keep learning!
+              You&apos;ve completed {Object.keys(quizResults).length} level(s). Keep learning!
             </p>
             <button onClick={() => setShowAnalytics(true)} className="analytics-button">
               <FiBarChart2 /> View Analytics Dashboard

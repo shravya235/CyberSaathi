@@ -37,7 +37,7 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
     { name: "Home", href: "/Home" },
     { name: "Quiz", href: "/Quiz" },
     { name: "Article", href: "/Article/article" },
-    { name: "About", href: "/About/about" },
+    { name: "About", href: "/About" },
     { name: "Community", href: "/Community/community" },
     { name: "Profile", href: "/Profile/profile" },
   ];
