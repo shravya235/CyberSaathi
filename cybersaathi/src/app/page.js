@@ -1,10 +1,10 @@
-import Homepage from "./Home/Page";  
+import Homepage from "./Home/page";
 import Landing from "@/pages/Landing/landing";
 
 export default function Home() {
   return (
     <div>
-      <Landing/>
+      <Landing />
     </div>
   );
 }
