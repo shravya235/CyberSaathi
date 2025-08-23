@@ -2,12 +2,8 @@
 import { useState } from "react";
 import Logo from "./logo";
 import NavLinks from "./Navlinks";
-import ProfileLink from "./profile";
-import LanguageDropdown from "./language";
-import { useLanguage } from "../../hooks/languagehook";
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { language, changeLanguage } = useLanguage();
 
   const closeMenu = () => setMobileOpen(false);
 
@@ -20,8 +16,6 @@ export default function Navbar() {
         {/* Desktop menu */}
         <div className="hidden md:flex space-x-6 items-center">
           <NavLinks closeMenu={closeMenu} />
-          <LanguageDropdown language={language} changeLanguage={changeLanguage} />
-          
         </div>
 
         {/* Mobile hamburger */}
@@ -48,8 +42,6 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-black shadow-lg py-4 px-6 flex flex-col space-y-4">
           <NavLinks closeMenu={closeMenu} />
-          <LanguageDropdown language={language} changeLanguage={changeLanguage} />
-          
         </div>
       )}
     </nav>

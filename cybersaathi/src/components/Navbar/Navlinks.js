@@ -8,7 +8,6 @@ export default function NavLinks({ closeMenu }) {
     { name: "About", href: "/About" },
     { name: "Community", href: "/Community/community" },
     { name: "profile", href: "/Profile/profile" },
-    { name: "contact", href: "/"}
   ];
 
   return (
