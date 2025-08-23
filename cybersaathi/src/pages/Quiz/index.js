@@ -1,51 +1,56 @@
-"use client"; // ensures this runs as a client component
+"use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiLock, FiAward, FiBarChart2, FiPlay, FiRefreshCw } from "react-icons/fi";
+import { FiLock, FiBarChart2, FiPlay, FiRefreshCw } from "react-icons/fi";
+
 import QuizComponent from "../../components/Quiz/QuizComponent";
 import AnalyticsDashboard from "../../components/Quiz/AnalyticsDashboard";
+import SampleForm from "../../components/Quiz/SampleForm";
+import PersonalizedTips from "../../components/Quiz/PersonalizedTips";
+
 import "./Quiz.css";
 
 const levels = [
-  { id: 1, title: "Level 1 - Basics", description: "True/False questions", unlocked: true },
-  { id: 2, title: "Level 2 - Intermediate", description: "Multiple choice questions", unlocked: false },
-  { id: 3, title: "Level 3 - Advanced", description: "Scenario-based questions", unlocked: false },
+  { id: 1, title: "Level 1 - Basics", description: "True/False questions" },
+  { id: 2, title: "Level 2 - Intermediate", description: "Multiple choice questions" },
+  { id: 3, title: "Level 3 - Advanced", description: "Scenario-based questions" },
 ];
 
 export default function QuizPage() {
-  const [unlockedLevels, setUnlockedLevels] = useState([1]);
+  const [userType, setUserType] = useState("");
+  const [showTips, setShowTips] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [quizResults, setQuizResults] = useState({});
+  const [unlockedLevels, setUnlockedLevels] = useState([1]);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
-  useEffect(() => {
-    // Load unlocked levels from localStorage if available
-    const savedUnlocked = localStorage.getItem('quizUnlockedLevels');
-    if (savedUnlocked) {
-      setUnlockedLevels(JSON.parse(savedUnlocked));
-    }
-
-    const savedResults = localStorage.getItem('quizResults');
-    if (savedResults) {
-      setQuizResults(JSON.parse(savedResults));
-    }
-  }, []);
-
-  const handleLevelSelect = (levelId) => {
-    setSelectedLevel(levelId);
+  // Handle demographic selection
+  const handleDemographicSelect = (selectedType) => {
+    setUserType(selectedType);
+    setShowTips(true);
+    // Set initial level based on user type
+    if (selectedType === "Student") setSelectedLevel(2);
+    else if (selectedType === "Professional") setSelectedLevel(3);
+    else setSelectedLevel(1);
   };
 
+  // Handle continue from tips
+  const handleContinueToQuiz = () => {
+    setShowTips(false);
+    localStorage.setItem("hasSeenTips", "true");
+    localStorage.setItem("userType", userType);
+  };
+
+  // Handle quiz completion
   const handleLevelComplete = (levelId, score, userAnswers) => {
-    // Update unlocked levels
     const nextLevel = levelId + 1;
     if (nextLevel <= 3 && !unlockedLevels.includes(nextLevel)) {
       const newUnlocked = [...unlockedLevels, nextLevel];
       setUnlockedLevels(newUnlocked);
-      localStorage.setItem('quizUnlockedLevels', JSON.stringify(newUnlocked));
+      localStorage.setItem("quizUnlockedLevels", JSON.stringify(newUnlocked));
     }
 
-    // Save results
     const newResults = {
       ...quizResults,
       [levelId]: {
@@ -53,35 +58,37 @@ export default function QuizPage() {
         completedAt: new Date().toISOString(),
         totalQuestions: userAnswers.length,
         correctAnswers: userAnswers.filter(a => a.isCorrect).length,
-        userAnswers
-      }
+        userAnswers,
+      },
     };
     setQuizResults(newResults);
-    localStorage.setItem('quizResults', JSON.stringify(newResults));
+    localStorage.setItem("quizResults", JSON.stringify(newResults));
 
     setSelectedLevel(null);
   };
 
-  const handleBackToLevels = () => {
-    setSelectedLevel(null);
-  };
+  // Go back to level selection
+  const handleBackToLevels = () => setSelectedLevel(null);
 
+  // --- Step 1: Show SampleForm if userType is not selected ---
+  if (!userType) return <SampleForm onSelect={handleDemographicSelect} />;
+
+  // --- Step 2: Show tips based on userType ---
+  if (showTips) return <PersonalizedTips demographic={userType} onContinue={handleContinueToQuiz} />;
+
+  // --- Step 3: Show QuizComponent for the starting level ---
   if (selectedLevel) {
     return (
       <QuizComponent
         levelId={selectedLevel}
+        userType={userType}
         onLevelComplete={handleLevelComplete}
         onBackToLevels={handleBackToLevels}
       />
     );
   }
 
-  if (showAnalytics) {
-    return (
-      <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
-    );
-  }
-
+  // --- Step 4: Level selection & progress dashboard ---
   return (
     <div className="quiz-container">
       <div className="quiz-content">
@@ -92,7 +99,12 @@ export default function QuizPage() {
 
         <div className="levels-grid">
           {levels.map((level) => {
-            const isUnlocked = unlockedLevels.includes(level.id);
+            const isAllowedByUserType =
+              (userType === "Others" && level.id === 1) ||
+              (userType === "Student" && level.id <= 2) ||
+              userType === "Professional";
+
+            const isUnlocked = unlockedLevels.includes(level.id) && isAllowedByUserType;
             const levelResult = quizResults[level.id];
             const isCompleted = levelResult && levelResult.score >= 60;
 
@@ -104,15 +116,10 @@ export default function QuizPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: level.id * 0.1 }}
-                className={`level-card ${!isUnlocked ? 'locked' : ''} ${isCompleted ? 'completed' : ''}`}
-                role="region"
-                aria-label={level.title}
+                className={`level-card ${!isUnlocked ? "locked" : ""} ${isCompleted ? "completed" : ""}`}
               >
                 <div className="level-header">
-                  <div className="level-number">
-                    {level.id}
-                  </div>
-                  
+                  <div className="level-number">{level.id}</div>
                   <h2 className="level-title">{level.title}</h2>
                   <p className="level-description">{level.description}</p>
 
@@ -127,18 +134,16 @@ export default function QuizPage() {
 
                   <div className="level-action">
                     {!isUnlocked ? (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, y: [0, -3, 0] }}
-                        transition={{ repeat: Infinity, duration: 2 }}
-                        className="locked-message"
-                      >
-                        <FiLock className="inline" /> Complete previous level
-                      </motion.div>
+                      <div className="locked-message">
+                        <FiLock className="inline" />{" "}
+                        {!isAllowedByUserType
+                          ? `Available for ${level.id === 1 ? "general" : level.id === 2 ? "student" : "professional"} users only`
+                          : "Complete previous level"}
+                      </div>
                     ) : (
                       <button
-                        className={`start-button ${isCompleted ? 'secondary' : 'primary'}`}
-                        onClick={() => handleLevelSelect(level.id)}
+                        className={`start-button ${isCompleted ? "secondary" : "primary"}`}
+                        onClick={() => setSelectedLevel(level.id)}
                       >
                         {isCompleted ? (
                           <>
@@ -164,16 +169,14 @@ export default function QuizPage() {
             <p className="progress-text">
               You've completed {Object.keys(quizResults).length} level(s). Keep learning!
             </p>
-            <button
-              onClick={() => setShowAnalytics(true)}
-              className="analytics-button"
-            >
+            <button onClick={() => setShowAnalytics(true)} className="analytics-button">
               <FiBarChart2 /> View Analytics Dashboard
             </button>
           </div>
         )}
+
+        {showAnalytics && <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />}
       </div>
     </div>
   );
 }
-
