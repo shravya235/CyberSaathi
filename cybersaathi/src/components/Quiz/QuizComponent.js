@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -42,20 +42,11 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
     { name: "Profile", href: "/Profile/profile" },
   ];
 
-  useEffect(() => {
-    if (timeLeft > 0 && !showFeedback && !quizCompleted) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !showFeedback) {
-      handleAnswer(null); // Time's up
-    }
-  }, [timeLeft, showFeedback, quizCompleted]);
-
-  const handleAnswer = (answer) => {
-    const correct = Array.isArray(currentQ.options) 
+  const handleAnswer = useCallback((answer) => {
+    const correct = Array.isArray(currentQ.options)
       ? answer === currentQ.answer
       : answer === currentQ.answer.toString();
-    
+
     setIsCorrect(correct);
     setSelectedAnswer(answer);
     setShowFeedback(true);
@@ -86,7 +77,16 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
         onLevelComplete(levelId, finalScore, userAnswers);
       }
     }, 1500);
-  };
+  }, [currentQ, score, timeLeft, currentQuestion, questions, onLevelComplete, levelId, userAnswers]);
+
+  useEffect(() => {
+    if (timeLeft > 0 && !showFeedback && !quizCompleted) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && !showFeedback) {
+      handleAnswer(null); // Time's up
+    }
+  }, [timeLeft, showFeedback, quizCompleted, handleAnswer]);
 
   const handleRetry = () => {
     setCurrentQuestion(0);
@@ -261,14 +261,14 @@ export default function QuizComponent({ levelId, onLevelComplete, onBackToLevels
               <div className={styles.feedbackTitle}>
                 {isCorrect ? 'Correct!' : 'Incorrect!'}
               </div>
-              
+
               {/* Scenario Explanation for Level 3 */}
               {currentQ.scenario && (
                 <div className={styles.scenarioExplanation}>
                   <strong>Explanation:</strong> {currentQ.scenario}
                 </div>
               )}
-              
+
               <div className={styles.correctAnswer}>
                 Correct answer: {Array.isArray(currentQ.options) ? currentQ.answer : currentQ.answer.toString()}
               </div>

@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "../../services/firebase";
 import styles from "./signupForm.module.css";
+import Image from 'next/image';
 import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
@@ -53,7 +54,6 @@ const SignupForm = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       setMessage("Successfully signed up with Google!");
-      // Redirect logic here if needed
       router.push("/Home");
     } catch (err) {
       setError(err.message);
@@ -71,9 +71,11 @@ const SignupForm = () => {
         className={styles.googleButton}
         disabled={loading}
       >
-        <img
+        <Image
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
           alt="Google logo"
+          width={22}
+          height={22}
         />
         Continue with Google
       </button>

@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../services/firebase";
 import styles from "./LoginForm.module.css";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -22,7 +23,6 @@ const LoginForm = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setMessage("Login successful! Redirecting...");
-      // Example: Redirect to homepage after login
       router.push("/Home");
     } catch (err) {
       setError(err.message);
@@ -54,9 +54,11 @@ const LoginForm = () => {
         className={styles.googleButton}
         disabled={loading}
       >
-        <img
+        <Image
           src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
           alt="Google logo"
+          width={22}
+          height={22}
         />
         Continue with Google
       </button>
