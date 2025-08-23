@@ -1,5 +1,5 @@
 import React from "react";
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import Link from "next/link";
 import "./Footer.css";
 
 const Footer = () => {
@@ -16,11 +16,10 @@ const Footer = () => {
         <div className="footer-section footer-links">
 <h4>Quick Links</h4>
 <ul>
-  <li><a href="/">Home</a></li>
-  <li><a href="/explore">Explore</a></li>
-  <li><a href="/profile">My Profile</a></li>
-  <li><a href="/resources">Resources</a></li>
-  <li><a href="/contact">Contact Us</a></li>
+  <li><Link href="/">Home</Link></li>
+  <li><Link href="/profile">My Profile</Link></li>
+  <li><Link href="/community">Resources</Link></li>
+  <li><Link href="/contact">Contact Us</Link></li>
 </ul>
         </div>
 
