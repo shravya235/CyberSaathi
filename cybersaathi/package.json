@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "eslint"
   },
@@ -15,7 +16,11 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
+<<<<<<< HEAD
     "tailwind-scrollbar-hide": "^4.0.0"
+=======
+    "@emotion/is-prop-valid": "^1.0.0"
+>>>>>>> 97d44549a22890b3845b1aa216e3db049c4f07e9
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./Community.module.css";
+import Image from "next/image";
 
 // Updated expert data
 const experts = [
@@ -80,10 +81,12 @@ export default function Community() {
       <section className={styles.cardGrid}>
         {experts.map((expert, idx) => (
           <article className={styles.card} key={idx}>
-            <img
+            <Image
               src={expert.avatar}
               alt={expert.name}
               className={styles.avatar}
+              width={100}
+              height={100}
             />
             <div className={styles.cardContent}>
               <h2 className={styles.name}>{expert.name}</h2>
