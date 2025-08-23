@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import styles from "./article.module.css";
+import styles from "./Article.module.css";
 
 export default function Article() {
   const pathname = usePathname();
